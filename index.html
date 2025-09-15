@@ -4,214 +4,1062 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <meta property="og:image" content="hear.png" />
-  <meta name="twitter:image" content="hear.png" />
-  <title>HEAR</title>
-  <link rel="stylesheet" href="main.css" />
+  <title>HEAR - AI 혐오표현 분석 플랫폼</title>
+  <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary: #5E3AEE;
+      --primary-light: #7C5CFC;
+      --primary-dark: #4A2FBE;
+      --secondary: #FF6B6B;
+      --accent: #4ECDC4;
+      --success: #51CF66;
+      --warning: #FFD43B;
+      --danger: #FF6B6B;
+      --dark: #0A0E27;
+      --dark-light: #151937;
+      --white: #FFFFFF;
+      --gray-100: #F7F9FC;
+      --gray-200: #E9EEF5;
+      --gray-300: #CBD5E1;
+      --gray-400: #94A3B8;
+      --gray-500: #64748B;
+      --gray-600: #475569;
+      --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+      --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.12);
+      --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.16);
+      --shadow-xl: 0 24px 64px rgba(0, 0, 0, 0.24);
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 20px;
+      --radius-xl: 28px;
+    }
+
+    body {
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: linear-gradient(180deg, #0A0E27 0%, #151937 100%);
+      min-height: 100vh;
+      color: var(--white);
+      position: relative;
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    /* Animated Background Pattern */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image: 
+        radial-gradient(circle at 20% 80%, rgba(94, 58, 238, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(78, 205, 196, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 40% 40%, rgba(255, 107, 107, 0.1) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* Floating Orbs */
+    .orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(40px);
+      opacity: 0.5;
+      animation: float 20s infinite ease-in-out;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .orb-1 {
+      width: 400px;
+      height: 400px;
+      background: linear-gradient(135deg, #5E3AEE, #7C5CFC);
+      top: -200px;
+      left: -100px;
+      animation-delay: 0s;
+    }
+
+    .orb-2 {
+      width: 300px;
+      height: 300px;
+      background: linear-gradient(135deg, #4ECDC4, #44A3AA);
+      bottom: -150px;
+      right: -100px;
+      animation-delay: 5s;
+    }
+
+    .orb-3 {
+      width: 250px;
+      height: 250px;
+      background: linear-gradient(135deg, #FF6B6B, #FF8E8E);
+      top: 50%;
+      left: 50%;
+      animation-delay: 10s;
+    }
+
+    @keyframes float {
+      0%, 100% {
+        transform: translate(0, 0) scale(1);
+      }
+      33% {
+        transform: translate(30px, -30px) scale(1.1);
+      }
+      66% {
+        transform: translate(-20px, 20px) scale(0.9);
+      }
+    }
+
+    /* Container */
+    .container {
+      position: relative;
+      z-index: 10;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    /* Header */
+    .header {
+      text-align: center;
+      padding: 60px 20px;
+      margin-bottom: 48px;
+      position: relative;
+    }
+
+    .logo-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 120px;
+      height: 120px;
+      margin: 0 auto 32px;
+      position: relative;
+      
+      animation: logoFloat 3s ease-in-out infinite;
+    }
+
+    @keyframes logoFloat {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .logo-container img {
+      display: block;
+      width: 200%;
+      height: 100%;
+      margin-left: auto;
+      margin-right: auto;
+      object-fit: contain;
+      filter: drop-shadow(0 20px 40px rgba(94, 58, 238, 0.3));
+    }
+
+    .main-title {
+      font-size: clamp(48px, 8vw, 72px);
+      font-weight: 900;
+      margin-bottom: 16px;
+      background: linear-gradient(135deg, #FFFFFF, #CBD5E1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: -1px;
+    }
+
+    .subtitle {
+      font-size: 20px;
+      color: var(--gray-400);
+      font-weight: 400;
+      margin-bottom: 12px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 8px 20px;
+      background: rgba(94, 58, 238, 0.1);
+      border: 1px solid rgba(94, 58, 238, 0.2);
+      border-radius: 100px;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--primary-light);
+      margin-bottom: 32px;
+    }
+
+    /* School Selector */
+    .selector-card {
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: var(--radius-xl);
+      padding: 32px;
+      margin-bottom: 48px;
+      box-shadow: var(--shadow-xl);
+    }
+
+    .selector-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .selector-title i {
+      color: var(--primary-light);
+    }
+
+    .selector-btn {
+      width: 100%;
+      padding: 20px 32px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      border: none;
+      border-radius: var(--radius-lg);
+      color: var(--white);
+      font-size: 18px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      box-shadow: 0 10px 40px rgba(94, 58, 238, 0.3);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .selector-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.6s;
+    }
+
+    .selector-btn:hover::before {
+      left: 100%;
+    }
+
+    .selector-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 15px 50px rgba(94, 58, 238, 0.4);
+    }
+
+    .selector-btn:active {
+      transform: translateY(0);
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+      margin-bottom: 48px;
+    }
+
+    .stat-card {
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: var(--radius-xl);
+      padding: 32px;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+    }
+
+    .stat-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-xl);
+      border-color: rgba(94, 58, 238, 0.2);
+    }
+
+    .stat-icon {
+      width: 56px;
+      height: 56px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      margin-bottom: 20px;
+      box-shadow: 0 8px 24px rgba(94, 58, 238, 0.25);
+    }
+
+    .stat-value {
+      font-size: 36px;
+      font-weight: 800;
+      color: var(--white);
+      margin-bottom: 8px;
+    }
+
+    .stat-label {
+      font-size: 16px;
+      color: var(--gray-400);
+      font-weight: 500;
+    }
+
+    /* Analysis Results */
+    .analysis-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 24px;
+      margin-bottom: 48px;
+    }
+
+    .analysis-card {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius-xl);
+      padding: 32px;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .analysis-card:hover {
+      transform: scale(1.02);
+      box-shadow: var(--shadow-xl);
+      border-color: rgba(94, 58, 238, 0.3);
+    }
+
+    .analysis-rank {
+      position: absolute;
+      top: 24px;
+      right: 24px;
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 18px;
+      box-shadow: 0 4px 16px rgba(94, 58, 238, 0.3);
+    }
+
+    .analysis-emoji {
+      font-size: 48px;
+      margin-bottom: 16px;
+    }
+
+    .analysis-label {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 12px;
+    }
+
+    .analysis-count {
+      font-size: 16px;
+      color: var(--gray-400);
+      margin-bottom: 20px;
+    }
+
+    .analysis-progress {
+      height: 6px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 100px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .analysis-progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+      border-radius: 100px;
+      transition: width 1s ease;
+    }
+
+    .analysis-btn {
+      width: 100%;
+      padding: 12px 24px;
+      background: rgba(94, 58, 238, 0.1);
+      border: 1px solid rgba(94, 58, 238, 0.2);
+      border-radius: var(--radius-md);
+      color: var(--primary-light);
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .analysis-btn:hover {
+      background: rgba(94, 58, 238, 0.2);
+      transform: translateY(-2px);
+    }
+
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(10px);
+      z-index: 1000;
+      padding: 24px;
+      overflow-y: auto;
+    }
+
+    .modal.active {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .modal-content {
+      background: linear-gradient(135deg, #151937, #1F2544);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: var(--radius-xl);
+      padding: 40px;
+      max-width: 600px;
+      width: 100%;
+      max-height: 85vh;
+      overflow-y: auto;
+      animation: slideUp 0.3s ease;
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 32px;
+    }
+
+    .modal-title {
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--white);
+    }
+
+    .modal-close {
+      width: 36px;
+      height: 36px;
+      background: rgba(255, 255, 255, 0.1);
+      border: none;
+      border-radius: 10px;
+      color: var(--gray-400);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+    }
+
+    .modal-close:hover {
+      background: rgba(255, 107, 107, 0.2);
+      color: var(--danger);
+      transform: rotate(90deg);
+    }
+
+    /* School Grid */
+    .school-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .school-item {
+      padding: 16px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: var(--radius-md);
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: 500;
+      font-size: 14px;
+    }
+
+    .school-item:hover {
+      background: rgba(94, 58, 238, 0.1);
+      border-color: rgba(94, 58, 238, 0.3);
+      transform: scale(1.05);
+    }
+
+    /* Examples */
+    .example-item {
+      padding: 16px 20px;
+      background: rgba(255, 255, 255, 0.03);
+      border-left: 3px solid var(--primary);
+      border-radius: var(--radius-sm);
+      margin-bottom: 12px;
+      color: var(--gray-300);
+      transition: all 0.3s ease;
+    }
+
+    .example-item:hover {
+      background: rgba(255, 255, 255, 0.05);
+      transform: translateX(4px);
+    }
+
+    /* Button */
+    .btn {
+      padding: 12px 24px;
+      border: none;
+      border-radius: var(--radius-md);
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 16px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      color: var(--white);
+      box-shadow: 0 8px 24px rgba(94, 58, 238, 0.3);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 32px rgba(94, 58, 238, 0.4);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--white);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    /* Footer */
+    .footer {
+      text-align: center;
+      padding: 48px 24px;
+      color: var(--gray-400);
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      margin-top: 80px;
+    }
+
+    .footer-grid {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 24px;
+      margin-bottom: 32px;
+    }
+
+    .partner-logo {
+      width: 80px;
+      height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0.6;
+      transition: all 0.3s ease;
+      filter: grayscale(100%);
+    }
+
+    .partner-logo:hover {
+      opacity: 1;
+      filter: grayscale(0%);
+      transform: scale(1.1);
+    }
+
+    .partner-logo img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: linear-gradient(135deg, #151937, #1F2544);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: var(--radius-md);
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: var(--shadow-xl);
+      z-index: 2000;
+      animation: slideInRight 0.3s ease;
+    }
+
+    @keyframes slideInRight {
+      from {
+        opacity: 0;
+        transform: translateX(100px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    .toast-icon {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--white);
+    }
+
+    /* Loading */
+    .loading {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 60px;
+      gap: 24px;
+    }
+
+    .loading-spinner {
+      width: 48px;
+      height: 48px;
+      border: 3px solid rgba(94, 58, 238, 0.1);
+      border-top: 3px solid var(--primary);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .loading-text {
+      color: var(--gray-400);
+      font-size: 16px;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .main-title {
+        font-size: 36px;
+      }
+      
+      .stats-grid,
+      .analysis-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .school-grid {
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      }
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: rgba(94, 58, 238, 0.3);
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(94, 58, 238, 0.5);
+    }
+  </style>
 </head>
 <body>
-  <div class="theme-toggle">
-    <img id="modeIcon" src="moon.png" alt="모드 전환 아이콘">
+  <!-- Floating Orbs -->
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+
+  <!-- Container -->
+  <div class="container">
+    <!-- Header -->
+    <header class="header">
+      <div class="badge">AI-Powered Analysis Platform</div>
+      <div class="logo-container">
+        <img src="hear.png" alt="HEAR">
+      </div>
+      <h1 class="main-title">HEAR</h1>
+      <p class="subtitle">Hatred Expression Academic Reducer</p>
+    </header>
+
+    <!-- School Selector -->
+    <div class="selector-card">
+      <h2 class="selector-title">
+        <i class="fas fa-school"></i>
+        학교 선택
+      </h2>
+      <button class="selector-btn" id="schoolSelector">
+        <i class="fas fa-graduation-cap"></i>
+        <span id="selectedSchool">학교를 선택하세요</span>
+        <i class="fas fa-chevron-down"></i>
+      </button>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-grid" id="statsGrid" style="display: none;">
+      <div class="stat-card">
+        <div class="stat-icon">
+          <i class="fas fa-comments"></i>
+        </div>
+        <div class="stat-value" id="totalComments">0</div>
+        <div class="stat-label">전체 분석 댓글</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">
+          <i class="fas fa-exclamation-triangle"></i>
+        </div>
+        <div class="stat-value" id="hateCount">0</div>
+        <div class="stat-label">혐오 표현 감지</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">
+          <i class="fas fa-graduation-cap"></i>
+        </div>
+        <div class="stat-value" id="educationCount">0</div>
+        <div class="stat-label">교육 프로그램</div>
+      </div>
+    </div>
+
+    <!-- Analysis Results -->
+    <div class="analysis-grid" id="analysisGrid"></div>
+
+    <!-- School Image -->
+    <div id="schoolImageSection" style="display: none; text-align: center; margin: 48px 0;">
+      <img id="schoolImage" src="" alt="School Analysis" style="max-width: 100%; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
+    </div>
+
+    <!-- Important Notice -->
+    <div style="text-align: center; margin: 48px 0;">
+      <img src="import.png" alt="Important" style="max-width: 100%; border-radius: 20px;">
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="footer-grid">
+        <div class="partner-logo"><a href="https://www.dimigo.hs.kr/"><img src="dimi.png" alt="디미고"></a></div>
+        <div class="partner-logo"><a href="https://jowon-h.goesw.kr/"><img src="jowon.png" alt="조원고"></a></div>
+        <div class="partner-logo"><a href="https://www.msit.go.kr/"><img src="scienceinfo.png" alt="과기정통부"></a></div>
+        <div class="partner-logo"><a href="https://www.gg.go.kr/"><img src="kungki.png" alt="경기도"></a></div>
+        <div class="partner-logo"><a href="https://www.gbsa.or.kr/"><img src="kungkieco.png" alt="경기도경제과학진흥원"></a></div>
+        <div class="partner-logo"><a href="http://kise.re.kr/"><img src="korinfo.png" alt="한국정보과학진흥협회"></a></div>
+        <div class="partner-logo"><a href="https://www.nipa.kr/"><img src="infotrans.png" alt="정보통신산업진흥원"></a></div>
+        <div class="partner-logo"><a href="https://www.skku.edu/"><img src="sung.png" alt="성균관대"></a></div>
+      </div>
+      <p>&copy; 2025 HEAR Platform. SW 미래채움 고등창의과학톤</p>
+    </footer>
   </div>
 
-  <div class="main-header">
-    <div class="subtitle">SW 미래채움 고등창의과학톤</div>
-    <img src="hear.png" alt="HEAR 로고" class="sub-logo">
-    <div class="main-description">Hatred Expression Academic Reducer</div>
-  </div>
-
-  <div class="selector">
-    <button id="openSelectBtn" class="form-select">학교 선택</button>
-  </div>
-
-  <div class="popup-overlay" id="schoolSelectPopup" style="display: none;">
-    <div class="popup-select">
-      <div class="option">수성고등학교</div>
-      <div class="option">삼일공업고등학교</div>
-      <div class="option">수원정보과학고등학교</div>
-      <div class="option">조원고등학교</div>
-      <div class="option">태광고등학교</div>
-      <div class="option">평촌경영고등학교</div>
-      <div class="option">광동고등학교</div>
-      <div class="option">동우여자고등학교</div>
-      <div class="option">동원고등학교</div>
-      <div class="option">덕영고등학교</div>
-      <div class="option">동탄국제고등학교</div>
-      <div class="option">백운고등학교</div>
-      <div class="option">서천고등학교</div>
-      <div class="option">성균관대학교</div>
-      <button id="closePopup" class="close-btn">닫기</button>
+  <!-- School Modal -->
+  <div class="modal" id="schoolModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title">🏫 학교 선택</h2>
+        <button class="modal-close" onclick="closeModal()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="school-grid">
+        <div class="school-item">수성고등학교</div>
+        <div class="school-item">삼일공업고등학교</div>
+        <div class="school-item">수원정보과학고등학교</div>
+        <div class="school-item">조원고등학교</div>
+        <div class="school-item">태광고등학교</div>
+        <div class="school-item">평촌경영고등학교</div>
+        <div class="school-item">광동고등학교</div>
+        <div class="school-item">동우여자고등학교</div>
+        <div class="school-item">동원고등학교</div>
+        <div class="school-item">덕영고등학교</div>
+        <div class="school-item">동탄국제고등학교</div>
+        <div class="school-item">백운고등학교</div>
+        <div class="school-item">서천고등학교</div>
+        <div class="school-item">성균관대학교</div>
+      </div>
     </div>
   </div>
 
-  <img id="schoolImage" src="" alt="학교 이미지" style="display: none;" class="school-image">
-
-  <div id="labelButtons" class="selector" style="display: none; flex-direction: column; gap: 10px;"></div>
-
-
-
-  <div class="popup-overlay" id="labelInfoPopup" style="display: none;">
-    <div class="popup-select">
-      <h3 id="popupLabelTitle"></h3>
-      <ul id="popupLabelExamples"></ul>
-      <button id="startLessonBtn" class="close-btn">교육 수강하기</button>
-      <button id="closeLabelPopup" class="close-btn" style="background: #ccc; color: #000;">닫기</button>
+  <!-- Detail Modal -->
+  <div class="modal" id="detailModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title" id="detailTitle"></h2>
+        <button class="modal-close" onclick="closeDetailModal()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div id="examplesList"></div>
+      <div style="display: flex; gap: 12px; margin-top: 24px;">
+        <button class="btn btn-primary" id="educationBtn">
+          <i class="fas fa-play"></i> 교육 영상
+        </button>
+        <button class="btn btn-secondary" onclick="closeDetailModal()">닫기</button>
+      </div>
     </div>
   </div>
 
-  <img src="import.png" alt="중요한" class="main-image">
-
-  <div class="logo-list">
-    <img src="dimi.png" alt="디미고" class="logo">
-    <img src="jowon.png" alt="조원고" class="logo">
-    <img src="scienceinfo.png" alt="과기정통부" class="logo">
-    <img src="kungki.png" alt="경기도" class="logo">
-    <img src="kungkieco.png" alt="경기도경제과학진흥원" class="logo">
-    <img src="korinfo.png" alt="한국정보과학진흥협회" class="logo">
-    <img src="infotrans.png" alt="정보통신산업진흥원" class="logo">
-    <img src="sung.png" alt="성균관대" class="logo">
+  <!-- Toast -->
+  <div class="toast" id="toast" style="display: none;">
+    <div class="toast-icon">
+      <i class="fas fa-check"></i>
+    </div>
+    <span id="toastMessage"></span>
   </div>
 
-  <!-- 기존 script 부분 동일 (생략 가능) -->
   <script>
-        const openBtn = document.getElementById('openSelectBtn');
-  const schoolPopup = document.getElementById('schoolSelectPopup');
-  const labelPopup = document.getElementById('labelInfoPopup');
-  const closePopup = document.getElementById('closePopup');
-  const closeLabelPopup = document.getElementById('closeLabelPopup');
-  const labelButtonContainer = document.getElementById('labelButtons');
-  const modeIcon = document.getElementById('modeIcon');
-  const popupLabelTitle = document.getElementById('popupLabelTitle');
-  const popupLabelExamples = document.getElementById('popupLabelExamples');
-  const startLessonBtn = document.getElementById('startLessonBtn');
-  const schoolImage = document.getElementById('schoolImage'); // 추가된 이미지 태그 참조
+    // Data
+    let jsonData = [];
+    const labelLinks = {
+      "여성/가족": "https://www.youtube.com/watch?v=atjLe8azVys",
+      "남성": "https://www.youtube.com/watch?v=atjLe8azVys",
+      "성소수자": "https://www.youtube.com/watch?v=C8F5mi2oNsc",
+      "인종/국적": "https://www.youtube.com/watch?v=z4ftwz1Sn5s",
+      "연령": "https://www.youtube.com/watch?v=SYa7xbONn-I",
+      "지역": "https://www.youtube.com/watch?v=o0VfeVSQKq0",
+      "종교": "https://www.youtube.com/watch?v=YtV8XyDHqi4",
+      "기타 혐오": "https://www.youtube.com/watch?v=EL--naoX1KQ",
+      "악플/욕설": "https://www.youtube.com/watch?v=AjPrpku-7U0",
+      "개인지칭": "https://www.youtube.com/watch?v=f5vgc9apIrI",
+      "장애": "https://www.youtube.com/watch?v=uBbNNqumoQs"
+    };
 
-  let jsonData = [];
-  let rotation = 0;
+    const labelEmojis = {
+      "여성/가족": "👩‍👩‍👧‍👦",
+      "남성": "👨",
+      "성소수자": "🏳️‍🌈",
+      "인종/국적": "🌍",
+      "연령": "👵",
+      "지역": "📍",
+      "종교": "⛪",
+      "기타 혐오": "⚠️",
+      "악플/욕설": "🚫",
+      "개인지칭": "👤",
+      "장애": "♿"
+    };
 
-  const labelLinks = {
-    "여성/가족": "https://www.youtube.com/watch?v=atjLe8azVys",
-    "남성": "https://www.youtube.com/watch?v=atjLe8azVys",
-    "성소수자": "https://www.youtube.com/watch?v=C8F5mi2oNsc",
-    "인종/국적": "https://www.youtube.com/watch?v=z4ftwz1Sn5s",
-    "연령": "https://www.youtube.com/watch?v=SYa7xbONn-I",
-    "지역": "https://www.youtube.com/watch?v=o0VfeVSQKq0",
-    "종교": "https://www.youtube.com/watch?v=YtV8XyDHqi4",
-    "기타 혐오": "https://www.youtube.com/watch?v=EL--naoX1KQ",
-    "악플/욕설": "https://www.youtube.com/watch?v=AjPrpku-7U0",
-    "개인지칭": "https://www.youtube.com/watch?v=f5vgc9apIrI",
-    "장애": "https://www.youtube.com/watch?v=uBbNNqumoQs"
-  };
+    // Functions
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toastMessage').textContent = message;
+      toast.style.display = 'flex';
+      setTimeout(() => {
+        toast.style.display = 'none';
+      }, 3000);
+    }
 
-  openBtn.onclick = () => schoolPopup.style.display = 'flex';
-  closePopup.onclick = () => schoolPopup.style.display = 'none';
-  closeLabelPopup.onclick = () => labelPopup.style.display = 'none';
+    function openModal() {
+      document.getElementById('schoolModal').classList.add('active');
+    }
 
-  schoolPopup.addEventListener('click', e => {
-    if (e.target === schoolPopup) schoolPopup.style.display = 'none';
-  });
-  labelPopup.addEventListener('click', e => {
-    if (e.target === labelPopup) labelPopup.style.display = 'none';
-  });
+    function closeModal() {
+      document.getElementById('schoolModal').classList.remove('active');
+    }
 
-  modeIcon.onclick = () => {
-    const isDark = document.body.classList.toggle('dark-mode');
-    rotation += 180;
-    modeIcon.style.transform = `rotate(${rotation}deg)`;
-    modeIcon.style.opacity = '0';
-    setTimeout(() => {
-      modeIcon.src = isDark ? 'sun.png' : 'moon.png';
-      modeIcon.style.opacity = '1';
-    }, 150);
-  };
+    function closeDetailModal() {
+      document.getElementById('detailModal').classList.remove('active');
+    }
 
-  const analyzeTopLabels = (data) => {
-    const counts = {};
-    const examples = {};
-
-    data.forEach(item => {
-      const content = item["내용"]?.trim();
-      if (!content || content.includes("dc official App")) return;
-
-      let bestLabel = null;
-      let bestScore = 0;
-
-      for (const key in item) {
-        if (key === "내용" || key === "clean" || !(key in labelLinks)) continue;
-        const score = parseFloat(item[key]);
-        if (score > bestScore) {
-          bestScore = score;
-          bestLabel = key;
+    function animateValue(id, start, end, duration) {
+      const obj = document.getElementById(id);
+      const range = end - start;
+      const startTime = performance.now();
+      
+      function update(currentTime) {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        const current = Math.floor(start + range * progress);
+        obj.textContent = current.toLocaleString();
+        
+        if (progress < 1) {
+          requestAnimationFrame(update);
         }
       }
+      
+      requestAnimationFrame(update);
+    }
 
-      if (bestLabel && bestScore > 0.25) {
-        counts[bestLabel] = (counts[bestLabel] || 0) + 1;
-        if (!examples[bestLabel]) examples[bestLabel] = [];
-        examples[bestLabel].push(content);
-      }
-    });
+    const analyzeTopLabels = (data) => {
+      const counts = {};
+      const examples = {};
 
-    return Object.entries(counts)
-      .sort((a, b) => b[1] - a[1])
-      .slice(0, 3)
-      .map(([label, count]) => ({ label, count, examples: examples[label] }));
-  };
+      data.forEach(item => {
+        const content = item["내용"]?.trim();
+        if (!content || content.includes("dc official App")) return;
 
-  const showLabelButtons = (topLabels) => {
-    labelButtonContainer.innerHTML = '';
-    topLabels.forEach((item, idx) => {
-      const btn = document.createElement('button');
-      btn.className = 'form-select';
-      btn.textContent = `${idx + 1}. ${item.label} (${item.count}회)`;
-      btn.onclick = () => {
-        const shuffled = item.examples.sort(() => 0.5 - Math.random());
-        const selected = shuffled.slice(0, 2);
-        popupLabelTitle.textContent = `${item.label} 예시`;
-        popupLabelExamples.innerHTML = selected.map(e => `<li>${e}</li>`).join('');
-        labelPopup.style.display = 'flex';
+        let bestLabel = null;
+        let bestScore = 0;
 
-        startLessonBtn.onclick = () => {
-          const url = labelLinks[item.label];
-          if (url) window.open(url, '_blank');
-        };
-      };
-      labelButtonContainer.appendChild(btn);
-    });
-    labelButtonContainer.style.display = 'flex';
-  };
+        for (const key in item) {
+          if (key === "내용" || key === "clean" || !(key in labelLinks)) continue;
+          const score = parseFloat(item[key]);
+          if (score > bestScore) {
+            bestScore = score;
+            bestLabel = key;
+          }
+        }
 
-  const loadAndAnalyzeJSON = (filename) => {
-    labelButtonContainer.style.display = 'flex';
-    labelButtonContainer.innerHTML = `<div style="color: var(--text-color); font-size: 18px;">데이터 불러오는 중...</div>`;
-
-    fetch(filename)
-      .then(res => res.json())
-      .then(data => {
-        jsonData = data;
-        const topLabels = analyzeTopLabels(jsonData);
-        showLabelButtons(topLabels);
-
-        // 이미지 표시 추가
-        const schoolName = filename.replace('.json', '');
-        const imagePath = `${schoolName}.png`;
-        schoolImage.src = imagePath;
-        schoolImage.style.display = 'block';
-      })
-      .catch(() => {
-        labelButtonContainer.innerHTML = `<div style="color: var(--text-color); font-size: 18px; font-weight: 400">해당 학교의 JSON 파일이 존재하지 않습니다.</div>`;
-        schoolImage.style.display = 'none';
+        if (bestLabel && bestScore > 0.25) {
+          counts[bestLabel] = (counts[bestLabel] || 0) + 1;
+          if (!examples[bestLabel]) examples[bestLabel] = [];
+          examples[bestLabel].push(content);
+        }
       });
-  };
 
-  document.querySelectorAll('.option').forEach(opt => {
-    opt.onclick = () => {
-      const schoolName = opt.textContent.trim();
-      openBtn.textContent = schoolName;
-      schoolPopup.style.display = 'none';
-      const filename = `${schoolName}.json`;
-      loadAndAnalyzeJSON(filename);
+      return Object.entries(counts)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 3)
+        .map(([label, count]) => ({ label, count, examples: examples[label] }));
     };
-  });
+
+    const showAnalysisCards = (topLabels) => {
+      const container = document.getElementById('analysisGrid');
+      container.innerHTML = '';
+      
+      topLabels.forEach((item, idx) => {
+        const emoji = labelEmojis[item.label] || '📊';
+        const percentage = Math.round((item.count / jsonData.length) * 100);
+        
+        const card = document.createElement('div');
+        card.className = 'analysis-card';
+        card.innerHTML = `
+          <div class="analysis-rank">${idx + 1}</div>
+          <div class="analysis-emoji">${emoji}</div>
+          <div class="analysis-label">${item.label}</div>
+          <div class="analysis-count">감지 횟수: ${item.count}회</div>
+          <div class="analysis-progress">
+            <div class="analysis-progress-bar" style="width: ${percentage}%"></div>
+          </div>
+          <button class="analysis-btn">자세히 보기</button>
+        `;
+        
+        card.querySelector('.analysis-btn').onclick = () => {
+          const shuffled = item.examples.sort(() => 0.5 - Math.random());
+          const selected = shuffled.slice(0, 3);
+          
+          document.getElementById('detailTitle').innerHTML = `${emoji} ${item.label}`;
+          document.getElementById('examplesList').innerHTML = selected.map(e => 
+            `<div class="example-item">${e}</div>`
+          ).join('');
+          
+          document.getElementById('educationBtn').onclick = () => {
+            window.open(labelLinks[item.label], '_blank');
+            showToast('교육 영상 페이지로 이동합니다');
+          };
+          
+          document.getElementById('detailModal').classList.add('active');
+        };
+        
+        container.appendChild(card);
+      });
+    };
+
+    const loadAndAnalyzeJSON = (filename) => {
+      const container = document.getElementById('analysisGrid');
+      container.innerHTML = `
+        <div class="loading">
+          <div class="loading-spinner"></div>
+          <div class="loading-text">AI가 데이터를 분석하고 있습니다...</div>
+        </div>
+      `;
+
+      document.getElementById('statsGrid').style.display = 'grid';
+
+      fetch(filename)
+        .then(res => res.json())
+        .then(data => {
+          jsonData = data;
+          
+          animateValue('totalComments', 0, data.length, 1000);
+          
+          const topLabels = analyzeTopLabels(jsonData);
+          const hateCount = topLabels.reduce((sum, item) => sum + item.count, 0);
+          animateValue('hateCount', 0, hateCount, 1000);
+          animateValue('educationCount', 0, Object.keys(labelLinks).length, 1000);
+          
+          showAnalysisCards(topLabels);
+
+          const schoolName = filename.replace('.json', '');
+          document.getElementById('schoolImage').src = `${schoolName}.png`;
+          document.getElementById('schoolImageSection').style.display = 'block';
+          
+          showToast('분석이 완료되었습니다!');
+        })
+        .catch(() => {
+          container.innerHTML = `
+            <div style="text-align: center; padding: 60px; color: #FF6B6B;">
+              <i class="fas fa-exclamation-circle" style="font-size: 48px; margin-bottom: 16px;"></i>
+              <div style="font-size: 20px; font-weight: 600;">데이터를 불러올 수 없습니다</div>
+            </div>
+          `;
+          showToast('데이터 로드 실패');
+        });
+    };
+
+    // Event Listeners
+    document.getElementById('schoolSelector').onclick = openModal;
+
+    document.getElementById('schoolModal').addEventListener('click', (e) => {
+      if (e.target === e.currentTarget) closeModal();
+    });
+
+    document.getElementById('detailModal').addEventListener('click', (e) => {
+      if (e.target === e.currentTarget) closeDetailModal();
+    });
+
+    document.querySelectorAll('.school-item').forEach(item => {
+      item.onclick = () => {
+        const schoolName = item.textContent.trim();
+        document.getElementById('selectedSchool').textContent = schoolName;
+        closeModal();
+        loadAndAnalyzeJSON(`${schoolName}.json`);
+      };
+    });
   </script>
 </body>
 </html>

@@ -677,6 +677,124 @@
       font-size: 16px;
     }
 
+    /* 추가된 Enhanced Loading Modal 스타일 */
+    .loading-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.9);
+      backdrop-filter: blur(20px);
+      z-index: 3000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .loading-modal.active {
+      display: flex;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .loading-modal-content {
+      background: linear-gradient(135deg, #151937, #1F2544);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: var(--radius-xl);
+      padding: 48px;
+      min-width: 400px;
+      text-align: center;
+      box-shadow: 0 30px 80px rgba(94, 58, 238, 0.3);
+    }
+
+    .loading-icon-wrapper {
+      margin-bottom: 32px;
+      position: relative;
+      height: 100px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .loading-ring {
+      width: 80px;
+      height: 80px;
+      border: 4px solid rgba(94, 58, 238, 0.1);
+      border-radius: 50%;
+      position: absolute;
+    }
+
+    .loading-ring-animated {
+      width: 80px;
+      height: 80px;
+      border: 4px solid transparent;
+      border-top: 4px solid var(--primary);
+      border-right: 4px solid var(--primary-light);
+      border-radius: 50%;
+      animation: spin 1.5s linear infinite;
+      position: absolute;
+    }
+
+    .loading-center-icon {
+      font-size: 32px;
+      color: var(--primary-light);
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.1); opacity: 0.8; }
+    }
+
+    .loading-status {
+      margin-bottom: 24px;
+    }
+
+    .loading-status-text {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--white);
+      margin-bottom: 8px;
+    }
+
+    .loading-status-sub {
+      font-size: 14px;
+      color: var(--gray-400);
+    }
+
+    .loading-progress {
+      height: 6px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 100px;
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+
+    .loading-progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+      border-radius: 100px;
+      width: 0;
+      transition: width 0.5s ease;
+    }
+
+    .loading-dots {
+      display: inline-block;
+    }
+
+    .loading-dots::after {
+      content: '';
+      animation: dots 1.5s steps(4, end) infinite;
+    }
+
+    @keyframes dots {
+      0% { content: ''; }
+      25% { content: '.'; }
+      50% { content: '..'; }
+      75% { content: '...'; }
+      100% { content: '....'; }
+    }
+
     /* Responsive */
     @media (max-width: 768px) {
       .main-title {
@@ -690,6 +808,11 @@
       
       .school-grid {
         grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      }
+
+      .loading-modal-content {
+        min-width: 90%;
+        padding: 32px 24px;
       }
     }
 
@@ -844,6 +967,28 @@
     </div>
   </div>
 
+  <!-- Enhanced Loading Modal (추가된 부분) -->
+  <div class="loading-modal" id="loadingModal">
+    <div class="loading-modal-content">
+      <div class="loading-icon-wrapper">
+        <div class="loading-ring"></div>
+        <div class="loading-ring-animated"></div>
+        <div class="loading-center-icon">
+          <i class="fas fa-robot"></i>
+        </div>
+      </div>
+      <div class="loading-status">
+        <div class="loading-status-text">
+          <span id="loadingStatusText">초기화 중</span><span class="loading-dots"></span>
+        </div>
+        <div class="loading-status-sub" id="loadingStatusSub">시스템을 준비하고 있습니다</div>
+      </div>
+      <div class="loading-progress">
+        <div class="loading-progress-bar" id="loadingProgressBar"></div>
+      </div>
+    </div>
+  </div>
+
   <!-- Toast -->
   <div class="toast" id="toast" style="display: none;">
     <div class="toast-icon">
@@ -882,6 +1027,48 @@
       "개인지칭": "👤",
       "장애": "♿"
     };
+
+    // ===== 로딩 시간 설정 (밀리초 단위) =====
+    // 여기서 각 단계별 로딩 시간을 조정할 수 있습니다
+    const LOADING_TIMES = {
+      crawling: 2500,      // 크롤링 중 (2.5초)
+      reading: 2500,       // 데이터 읽는 중 (2.5초)
+      analyzing: 2500,     // 데이터 분석 중 (2.5초)
+      visualizing: 2500    // 시각 자료 구성 중 (2.5초)
+      // 총 10초
+    };
+
+    // Loading states
+    const loadingStates = [
+      { 
+        text: '크롤링 중', 
+        sub: '웹 데이터를 수집하고 있습니다',
+        icon: 'fa-spider',
+        progress: 25,
+        duration: LOADING_TIMES.crawling
+      },
+      { 
+        text: '데이터 읽는 중', 
+        sub: '수집된 데이터를 처리하고 있습니다',
+        icon: 'fa-database',
+        progress: 50,
+        duration: LOADING_TIMES.reading
+      },
+      { 
+        text: '데이터 분석 중', 
+        sub: 'AI가 혐오 표현을 분석하고 있습니다',
+        icon: 'fa-brain',
+        progress: 75,
+        duration: LOADING_TIMES.analyzing
+      },
+      { 
+        text: '시각 자료 구성 중', 
+        sub: '분석 결과를 시각화하고 있습니다',
+        icon: 'fa-chart-bar',
+        progress: 100,
+        duration: LOADING_TIMES.visualizing
+      }
+    ];
 
     // Functions
     function showToast(message) {
@@ -922,6 +1109,35 @@
       }
       
       requestAnimationFrame(update);
+    }
+
+    // Enhanced loading function
+    async function showLoadingSequence() {
+      const modal = document.getElementById('loadingModal');
+      const statusText = document.getElementById('loadingStatusText');
+      const statusSub = document.getElementById('loadingStatusSub');
+      const progressBar = document.getElementById('loadingProgressBar');
+      const centerIcon = document.querySelector('.loading-center-icon i');
+      
+      modal.classList.add('active');
+      
+      for (let i = 0; i < loadingStates.length; i++) {
+        const state = loadingStates[i];
+        
+        // Update UI
+        statusText.textContent = state.text;
+        statusSub.textContent = state.sub;
+        centerIcon.className = `fas ${state.icon}`;
+        progressBar.style.width = `${state.progress}%`;
+        
+        // Wait for specified duration
+        await new Promise(resolve => setTimeout(resolve, state.duration));
+      }
+      
+      // Hide loading modal
+      setTimeout(() => {
+        modal.classList.remove('active');
+      }, 500);
     }
 
     const analyzeTopLabels = (data) => {
@@ -999,14 +1215,9 @@
       });
     };
 
-    const loadAndAnalyzeJSON = (filename) => {
-      const container = document.getElementById('analysisGrid');
-      container.innerHTML = `
-        <div class="loading">
-          <div class="loading-spinner"></div>
-          <div class="loading-text">AI가 데이터를 분석하고 있습니다...</div>
-        </div>
-      `;
+    const loadAndAnalyzeJSON = async (filename) => {
+      // Show loading sequence first
+      await showLoadingSequence();
 
       document.getElementById('statsGrid').style.display = 'grid';
 
@@ -1031,6 +1242,7 @@
           showToast('분석이 완료되었습니다!');
         })
         .catch(() => {
+          const container = document.getElementById('analysisGrid');
           container.innerHTML = `
             <div style="text-align: center; padding: 60px; color: #FF6B6B;">
               <i class="fas fa-exclamation-circle" style="font-size: 48px; margin-bottom: 16px;"></i>

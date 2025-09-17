@@ -873,7 +873,7 @@
           <i class="fas fa-comments"></i>
         </div>
         <div class="stat-value" id="totalComments">0</div>
-        <div class="stat-label">전체 분석 댓글</div>
+        <div class="stat-label">전체 분석 게시글</div>
       </div>
       <div class="stat-card">
         <div class="stat-icon">
@@ -1031,10 +1031,10 @@
     // ===== 로딩 시간 설정 (밀리초 단위) =====
     // 여기서 각 단계별 로딩 시간을 조정할 수 있습니다
     const LOADING_TIMES = {
-      crawling: 2500,      // 크롤링 중 (2.5초)
-      reading: 2500,       // 데이터 읽는 중 (2.5초)
-      analyzing: 2500,     // 데이터 분석 중 (2.5초)
-      visualizing: 2500    // 시각 자료 구성 중 (2.5초)
+      crawling: 3000,      // 크롤링 중 (2.5초)
+      reading: 1500,       // 데이터 읽는 중 (2.5초)
+      analyzing: 4500,     // 데이터 분석 중 (2.5초)
+      visualizing: 1000    // 시각 자료 구성 중 (2.5초)
       // 총 10초
     };
 
@@ -1042,28 +1042,28 @@
     const loadingStates = [
       { 
         text: '크롤링 중', 
-        sub: '웹 데이터를 수집하고 있습니다',
+        sub: '웹 데이터를 수집 중',
         icon: 'fa-spider',
-        progress: 25,
+        progress: 30,
         duration: LOADING_TIMES.crawling
       },
       { 
         text: '데이터 읽는 중', 
-        sub: '수집된 데이터를 처리하고 있습니다',
+        sub: '수집된 데이터를 처리 중',
         icon: 'fa-database',
-        progress: 50,
+        progress: 45,
         duration: LOADING_TIMES.reading
       },
       { 
         text: '데이터 분석 중', 
-        sub: 'AI가 혐오 표현을 분석하고 있습니다',
+        sub: 'AI가 혐오 표현을 분석 중',
         icon: 'fa-brain',
-        progress: 75,
+        progress: 90,
         duration: LOADING_TIMES.analyzing
       },
       { 
         text: '시각 자료 구성 중', 
-        sub: '분석 결과를 시각화하고 있습니다',
+        sub: '분석 결과를 시각화 중',
         icon: 'fa-chart-bar',
         progress: 100,
         duration: LOADING_TIMES.visualizing
